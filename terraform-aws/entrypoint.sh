@@ -2,12 +2,8 @@
 set -e
 
 if [ -n "${TF_TOKEN}" ] ; then
-  if [ -e "${TF_SERVICE}" ] ; then
-    TF_SERVICE="app.terraform.io"
-  fi
-
   cat > "${HOME}/.terraformrc" <<EOF
-credentials "${TF_SERVICE}" {
+credentials "${TF_HOSTNAME}" {
   token = "${TF_TOKEN}"
 }
 

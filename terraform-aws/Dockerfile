@@ -1,7 +1,7 @@
 FROM alpine:3.11
 
-ENV TF_TOKEN=$TF_TOKEN
-ENV TF_SERVICES=$TF_SERVICES
+ENV TF_TOKEN=""
+ENV TF_HOSTNAME="app.terraform.io"
 
 ARG GLIBC_VERSION=2.31-r0
 ARG TERRAFORM_VERSION=0.13.1
@@ -31,8 +31,7 @@ RUN apk --no-cache add binutils && \
 
 RUN curl -L https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o awscliv2.zip && \
     unzip awscliv2.zip && \
-    ./aws/install && \
-    rm -rf awscliv2.zip
+    ./aws/install
 
 # Cleanup
 RUN apk del .build-deps && \
