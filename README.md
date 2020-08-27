@@ -68,9 +68,9 @@ docker run -it --rm kooldev/toolkit:full helm version
 
 ### Variables
 
-**TF_CONF_BASE64**: The `.terraformrc` file in base64, you can generate this with: `base64 .terraformrc`
-**AWS_CONF_BASE64**: The `.aws/config` file in base64, you can generate this with: `base64 .aws/config`
-**AWS_CRED_BASE64**: The `.aws/credentials` file in base64, you can generate this with: `base64 .aws/credentials`
+**TF_CONF_BASE64**: The `.terraformrc` file in base64, you can generate this with: `base64 .terraformrc`  
+**AWS_CONF_BASE64**: The `.aws/config` file in base64, you can generate this with: `base64 .aws/config`  
+**AWS_CRED_BASE64**: The `.aws/credentials` file in base64, you can generate this with: `base64 .aws/credentials`  
 
 ## License
 
