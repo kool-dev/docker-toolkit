@@ -1,17 +1,36 @@
-FROM kooldev/toolkit:3.2.0-helm as helm
-FROM kooldev/toolkit:1.41.0-doctl as doctl
-FROM kooldev/toolkit:1.18.2-kubectl as kubectl
-FROM kooldev/toolkit:terraform-aws as terraform-aws
-FROM kooldev/toolkit:1.25.5-docker-compose as docker-compose
+FROM docker/compose:alpine-1.26.2 as compose
 
-FROM alpine:3.12
+FROM kooldev/toolkit:terraform-aws
 
-COPY --from=terraform-aws /usr/local/bin /usr/local/bin
-COPY --from=helm /usr/local/bin/helm /usr/local/bin/helm
-COPY --from=doctl /usr/local/bin/doctl /usr/local/bin/doctl
-COPY --from=kubectl /usr/local/bin/kubectl /usr/local/bin/kubectl
-COPY --from=docker-compose /usr/local/bin/docker /usr/local/bin/docker
-COPY --from=docker-compose /usr/local/bin/docker-compose /usr/local/bin/docker-compose
+ARG HELM_VERSION=3.2.0
+ARG DOCTL_VERSION=1.41.0
+ARG KUBECTL_VERSION=1.18.2
+
+WORKDIR /tmp
+
+RUN apk add --update --no-cache --virtual .build-deps curl ca-certificates
+
+# Install docker and docker-compose
+COPY --from=compose /usr/local/bin/docker /usr/local/bin/docker
+COPY --from=compose /usr/local/bin/docker-compose /usr/local/bin/docker-compose
+
+# Install kubectl
+RUN curl -L https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl && \
+    chmod +x /usr/local/bin/kubectl
+
+# Install helm
+RUN curl -L https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz | tar xz && \
+    mv linux-amd64/helm /usr/local/bin/helm && \
+    chmod +x /usr/local/bin/helm
+
+# Install doctl
+RUN curl -L https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VERSION}/doctl-${DOCTL_VERSION}-linux-amd64.tar.gz | tar xz && \
+    mv doctl /usr/local/bin/doctl && \
+    chmod +x /usr/local/bin/doctl
+
+# Cleanup
+RUN apk del .build-deps && \
+    rm -rf /tmp/*
 
 WORKDIR /app
 

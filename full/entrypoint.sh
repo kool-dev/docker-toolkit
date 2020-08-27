@@ -1,18 +1,17 @@
 #!/bin/sh
 set -e
 
-if [ -n "${TF_CONF_BASE64}" ] ; then
-  echo "${TF_CONF_BASE64}" | base64 -d > "${HOME}/.terraformrc"
-fi
+if [ -n "${TF_TOKEN}" ] ; then
+  if [ -z "${TF_HOSTNAME}" ] ; then
+    TF_HOSTNAME="app.terraform.io"
+  fi
 
-if [ -n "${AWS_CONF_BASE64}" ] ; then
-  mkdir -p "${HOME}/.aws"
-  echo "${AWS_CONF_BASE64}" | base64 -d > "${HOME}/.aws"/config
-fi
+  cat > "${HOME}/.terraformrc" <<EOF
+credentials "${TF_HOSTNAME}" {
+  token = "${TF_TOKEN}"
+}
 
-if [ -n "${AWS_CRED_BASE64}" ] ; then
-  mkdir -p "${HOME}/.aws"
-  echo "${AWS_CRED_BASE64}" | base64 -d > "${HOME}/.aws"/credentials
+EOF
 fi
 
 exec "$@"
