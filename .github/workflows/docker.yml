@@ -1,0 +1,55 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        doctl-version: [ 1.41.0 ]
+        aws-cli-version: [ 2.0.43 ]
+        helm-cli-version: [ 3.2.0 ]
+        kubectl-version: [ 1.18.2 ]
+        terraform-version: [ 0.13.1 ]
+        docker-compose-version: [ 1.25.5 ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+
+      - name: Build images
+        run: |
+          docker build --pull -t kooldev/toolkit:${{ matrix.terraform-version }}-terraform ${{ matrix.terraform-version }}-terraform
+          docker build --pull -t kooldev/toolkit:${{ matrix.aws-cli-version }}-aws-cli ${{ matrix.aws-cli-version }}-aws-cli
+          docker build --pull -t kooldev/toolkit:${{ matrix.kubectl-version }}-kubectl ${{ matrix.kubectl-version }}-kubectl
+          docker build --pull -t kooldev/toolkit:${{ matrix.docker-compose-version }}-docker-compose ${{ matrix.docker-compose-version }}-docker-compose
+          docker build --pull -t kooldev/toolkit:${{ matrix.doctl-version }}-doctl ${{ matrix.doctl-version }}-doctl
+          docker build -t kooldev/toolkit:${{ matrix.helm-cli-version }}-helm-cli ${{ matrix.helm-cli-version }}-helm-cli
+          docker build -t kooldev/toolkit:terraform-aws terraform-aws
+          docker build -t kooldev/toolkit:full full
+      - name: Test docker images
+        run: |
+          docker run kooldev/toolkit:${{ matrix.terraform-version }}-terraform terraform --version
+          docker run kooldev/toolkit:${{ matrix.aws-cli-version }}-aws-cli aws --version
+          docker run kooldev/toolkit:${{ matrix.kubectl-version }}-kubectl kubectl --help
+          docker run kooldev/toolkit:${{ matrix.docker-compose-version }}-docker-compose docker-compose --version && docker --version
+          docker run kooldev/toolkit:${{ matrix.doctl-version }}-doctl doctl version
+          docker run kooldev/toolkit:${{ matrix.helm-cli-version }}-helm-cli helm version
+          docker run kooldev/toolkit:terraform-aws terraform --version && aws --version
+          docker run kooldev/toolkit:full terraform --version && aws --version && kubectl --help && docker-compose --version && docker --version && doctl version && helm version
+      - name: Push to Hub
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+          docker push kooldev/toolkit:${{ matrix.terraform-version }}-terraform
+          docker push kooldev/toolkit:${{ matrix.aws-cli-version }}-aws-cli
+          docker push kooldev/toolkit:${{ matrix.kubectl-version }}-kubectl
+          docker push kooldev/toolkit:${{ matrix.docker-compose-version }}-docker-compose
+          docker push kooldev/toolkit:${{ matrix.doctl-version }}-doctl
+          docker push kooldev/toolkit:${{ matrix.helm-cli-version }}-helm-cli
+          docker push kooldev/toolkit:terraform-aws
+          docker push kooldev/toolkit:full
