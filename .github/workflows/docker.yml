@@ -1,11 +1,5 @@
 name: CI
-on:
-  push:
-    branches:
-      - master@kool-dev/docker-toolkit
-  pull_request:
-    branches:
-      - '*'
+on: [push, pull_request]
 
 jobs:
   build:
@@ -36,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Push to Hub
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'kool-dev/docker-toolkit'
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
