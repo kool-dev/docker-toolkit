@@ -30,7 +30,7 @@ RUN curl -L https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VER
 
 # Cleanup
 RUN apk del .build-deps && \
-    rm -rf /tmp/*
+    rm -rf /tmp/* /var/cache/apk/*
 
 WORKDIR /app
 

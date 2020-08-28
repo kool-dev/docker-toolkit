@@ -35,7 +35,7 @@ RUN curl -L https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o awscliv2
 
 # Cleanup
 RUN apk del .build-deps && \
-    rm -rf /tmp/*
+    rm -rf /tmp/* /var/cache/apk/*
 
 WORKDIR /app
 

@@ -1,11 +1,15 @@
 name: CI
-
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master@kool-dev/docker-toolkit
+  pull_request:
+    branches:
+      - '*'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@master
@@ -14,6 +18,7 @@ jobs:
         run: |
           docker build --pull -t kooldev/toolkit:terraform-aws terraform-aws
           docker build -t kooldev/toolkit:full full
+
       - name: Test docker images
         run: |
           docker run -t --rm kooldev/toolkit:terraform-aws terraform --version
@@ -26,6 +31,10 @@ jobs:
           docker run -t --rm kooldev/toolkit:full docker-compose --version
           docker run -t --rm kooldev/toolkit:full doctl version
           docker run -t --rm kooldev/toolkit:full helm version
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
       - name: Push to Hub
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         env:
