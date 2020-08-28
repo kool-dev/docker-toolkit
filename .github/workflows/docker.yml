@@ -27,6 +27,7 @@ jobs:
           docker run -t --rm kooldev/toolkit:full helm version
 
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Push to Hub
