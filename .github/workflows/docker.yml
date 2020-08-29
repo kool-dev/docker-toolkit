@@ -26,10 +26,6 @@ jobs:
           docker run -t --rm kooldev/toolkit:full doctl version
           docker run -t --rm kooldev/toolkit:full helm version
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
       - name: Push to Hub
         if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'kool-dev/docker-toolkit'
         env:
