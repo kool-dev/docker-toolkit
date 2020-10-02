@@ -10,4 +10,8 @@ credentials "${TF_HOSTNAME}" {
 EOF
 fi
 
+if [ -n "${KUBECONFIG_NAME}" ] && [ ! -f /root/.kube/config ] ; then
+  aws eks --region "${AWS_DEFAULT_REGION}" update-kubeconfig --name "${KUBECONFIG_NAME}"
+fi
+
 exec "$@"
