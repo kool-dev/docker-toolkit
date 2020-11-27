@@ -9,7 +9,10 @@ ARG AWS_IAM_AUTH_VERSION=0.5.1
 
 WORKDIR /tmp
 
-RUN apk add --update --no-cache --virtual .build-deps curl ca-certificates
+RUN apk add --no-cache --virtual .build-deps curl ca-certificates
+
+# Install general dependencies
+RUN apk add --no-cache git
 
 # Install terraform
 RUN curl -L https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -o terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
