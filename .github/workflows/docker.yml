@@ -1,37 +1,54 @@
-name: CI
-on: [push, pull_request]
+name: docker
+
+on:
+  push:
+    tags:
+    - '*'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@master
 
+      - uses: olegtarasov/get-tag@v2.1
+        id: tagName
+
       - name: Build images
+        env:
+          TAGNAME: ${{ steps.tagName.outputs.tag }}
         run: |
-          docker build --pull -t kooldev/toolkit:terraform-aws terraform-aws
-          docker build -t kooldev/toolkit:full full
+          docker build --pull -t kooldev/toolkit:$TAGNAME-terraform-aws terraform-aws
+          docker build -t kooldev/toolkit:$TAGNAME-full full
 
       - name: Test docker images
         run: |
-          docker run -t --rm kooldev/toolkit:terraform-aws terraform --version
-          docker run -t --rm kooldev/toolkit:terraform-aws aws --version
+          docker run -t --rm kooldev/toolkit:$TAGNAME-terraform-aws terraform --version
+          docker run -t --rm kooldev/toolkit:$TAGNAME-terraform-aws aws --version
 
-          docker run -t --rm kooldev/toolkit:full terraform --version
-          docker run -t --rm kooldev/toolkit:full aws --version
-          docker run -t --rm kooldev/toolkit:full kubectl --help
-          docker run -t --rm kooldev/toolkit:full docker --version
-          docker run -t --rm kooldev/toolkit:full docker-compose --version
-          docker run -t --rm kooldev/toolkit:full doctl version
-          docker run -t --rm kooldev/toolkit:full helm version
+          docker run -t --rm kooldev/toolkit:$TAGNAME-full terraform --version
+          docker run -t --rm kooldev/toolkit:$TAGNAME-full aws --version
+          docker run -t --rm kooldev/toolkit:$TAGNAME-full kubectl --help
+          docker run -t --rm kooldev/toolkit:$TAGNAME-full docker --version
+          docker run -t --rm kooldev/toolkit:$TAGNAME-full docker-compose --version
+          docker run -t --rm kooldev/toolkit:$TAGNAME-full doctl version
+          docker run -t --rm kooldev/toolkit:$TAGNAME-full helm version
 
       - name: Push to Hub
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'kool-dev/docker-toolkit'
         env:
+          TAGNAME: ${{ steps.tagName.outputs.tag }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
+          docker tag kooldev/toolkit:$TAGNAME-terraform-aws kooldev/toolkit:1.0-terraform-aws
+          docker tag kooldev/toolkit:$TAGNAME-full kooldev/toolkit:1.0-full
+
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-          docker push kooldev/toolkit:terraform-aws
-          docker push kooldev/toolkit:full
+
+          docker push kooldev/toolkit:$TAGNAME-terraform-aws
+          docker push kooldev/toolkit:$TAGNAME-full
+
+          docker push kooldev/toolkit:1.0-terraform-aws
+          docker push kooldev/toolkit:1.0-full
