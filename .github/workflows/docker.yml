@@ -24,6 +24,8 @@ jobs:
           docker build -t kooldev/toolkit:$TAGNAME-full full
 
       - name: Test docker images
+        env:
+          TAGNAME: ${{ steps.tagName.outputs.tag }}
         run: |
           docker run -t --rm kooldev/toolkit:$TAGNAME-terraform-aws terraform --version
           docker run -t --rm kooldev/toolkit:$TAGNAME-terraform-aws aws --version
