@@ -9,19 +9,19 @@ With `docker run`:
 
 ### Terraform with Aws Cli
 ```sh
-docker run -it --rm kooldev/toolkit:terraform-aws terraform --version 
-docker run -it --rm kooldev/toolkit:terraform-aws aws --version 
+docker run -it --rm kooldev/toolkit:1.0-terraform-aws terraform --version 
+docker run -it --rm kooldev/toolkit:1.0-terraform-aws aws --version 
 ```
 
 ### Full
 ```sh
-docker run -it --rm kooldev/toolkit:full terraform --version 
-docker run -it --rm kooldev/toolkit:full aws --version 
-docker run -it --rm kooldev/toolkit:full kubectl --help 
-docker run -it --rm kooldev/toolkit:full docker --version 
-docker run -it --rm kooldev/toolkit:full docker-compose --version 
-docker run -it --rm kooldev/toolkit:full doctl version 
-docker run -it --rm kooldev/toolkit:full helm version 
+docker run -it --rm kooldev/toolkit:1.0-full terraform --version 
+docker run -it --rm kooldev/toolkit:1.0-full aws --version 
+docker run -it --rm kooldev/toolkit:1.0-full kubectl --help 
+docker run -it --rm kooldev/toolkit:1.0-full docker --version 
+docker run -it --rm kooldev/toolkit:1.0-full docker-compose --version 
+docker run -it --rm kooldev/toolkit:1.0-full doctl version 
+docker run -it --rm kooldev/toolkit:1.0-full helm version 
 ```
 
 ### Available Tags
