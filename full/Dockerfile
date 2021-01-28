@@ -1,10 +1,10 @@
-FROM docker/compose:alpine-1.26.2 as compose
+FROM docker/compose:alpine-1.28.2 as compose
 
 FROM kooldev/toolkit:terraform-aws
 
-ARG HELM_VERSION=3.2.0
-ARG DOCTL_VERSION=1.41.0
-ARG KUBECTL_VERSION=1.18.2
+ARG HELM_VERSION=3.5.1
+ARG DOCTL_VERSION=1.55.0
+ARG KUBECTL_VERSION=1.18.15
 
 WORKDIR /tmp
 
