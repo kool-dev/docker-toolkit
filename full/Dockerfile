@@ -11,6 +11,7 @@ WORKDIR /tmp
 RUN apk add --update --no-cache --virtual .build-deps curl ca-certificates
 
 # Install docker and docker-compose
+ENV DOCKER_HOST=tcp://docker:2375
 COPY --from=compose /usr/local/bin/docker /usr/local/bin/docker
 COPY --from=compose /usr/local/bin/docker-compose /usr/local/bin/docker-compose
 
